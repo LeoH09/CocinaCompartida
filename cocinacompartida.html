@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>CocinaCompartida MX - Economía colaborativa para comedores</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: #fff7ed; /* tono cálido */
+      color: #1f2933;
+    }
+
+    header {
+      background: linear-gradient(135deg, #fb923c, #f97316);
+      color: white;
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    header h1 {
+      font-size: 1.4rem;
+    }
+
+    header span {
+      font-size: 0.8rem;
+      opacity: 0.9;
+      display: block;
+    }
+
+    .btn-primario {
+      background: white;
+      color: #c2410c;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 999px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.9rem;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-primario:hover {
+      background: #ffedd5;
+    }
+
+    main {
+      padding: 1.5rem 1rem 2rem;
+      max-width: 950px;
+      margin: 0 auto;
+    }
+
+    .intro {
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+      color: #374151;
+      background: #fffbeb;
+      border-radius: 12px;
+      padding: 0.8rem 1rem;
+      box-shadow: 0 1px 4px rgba(15, 23, 42, 0.06);
+    }
+
+    .intro strong {
+      color: #c2410c;
+    }
+
+    .filtros {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin: 1rem 0;
+      align-items: center;
+    }
+
+    .filtros label {
+      font-size: 0.8rem;
+      color: #4b5563;
+    }
+
+    .filtros select,
+    .filtros input {
+      padding: 0.4rem 0.6rem;
+      border-radius: 999px;
+      border: 1px solid #d1d5db;
+      font-size: 0.85rem;
+      outline: none;
+      background: white;
+    }
+
+    .lista-recursos {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 1rem;
+    }
+
+    .tarjeta {
+      background: white;
+      border-radius: 16px;
+      padding: 0.9rem 1rem;
+      box-shadow: 0 2px 9px rgba(15, 23, 42, 0.09);
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      border: 1px solid #fed7aa;
+    }
+
+    .tarjeta h3 {
+      font-size: 1rem;
+      margin-bottom: 0.1rem;
+      color: #111827;
+    }
+
+    .categoria-pill {
+      display: inline-block;
+      font-size: 0.7rem;
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      background: #ffedd5;
+      color: #9a3412;
+      font-weight: 600;
+    }
+
+    .barrio {
+      font-size: 0.8rem;
+      color: #6b7280;
+    }
+
+    .precio {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #16a34a;
+    }
+
+    .tipo-uso {
+      font-size: 0.78rem;
+      color: #9a3412;
+    }
+
+    .nota {
+      font-size: 0.8rem;
+      color: #4b5563;
+    }
+
+    .tarjeta button {
+      margin-top: 0.4rem;
+      align-self: flex-start;
+      padding: 0.4rem 0.8rem;
+      border-radius: 999px;
+      border: none;
+      background: #f97316;
+      color: white;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .tarjeta button:hover {
+      background: #ea580c;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 0.75rem;
+      color: #9ca3af;
+      margin-top: 1.5rem;
+    }
+
+    /* Modal */
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.35);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+      z-index: 50;
+    }
+
+    .overlay.activo {
+      display: flex;
+    }
+
+    .modal {
+      background: #fefce8;
+      border-radius: 18px;
+      padding: 1.2rem 1.2rem 1rem;
+      max-width: 430px;
+      width: 100%;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      border: 1px solid #facc15;
+    }
+
+    .modal h2 {
+      font-size: 1.1rem;
+      margin-bottom: 0.7rem;
+      color: #92400e;
+    }
+
+    .modal form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .modal label {
+      font-size: 0.8rem;
+      color: #4b5563;
+    }
+
+    .modal input,
+    .modal select,
+    .modal textarea {
+      width: 100%;
+      padding: 0.45rem 0.6rem;
+      font-size: 0.85rem;
+      border-radius: 10px;
+      border: 1px solid #d1d5db;
+      outline: none;
+      background: white;
+    }
+
+    .modal textarea {
+      resize: vertical;
+      min-height: 60px;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .btn-secundario {
+      padding: 0.4rem 0.9rem;
+      font-size: 0.8rem;
+      border-radius: 999px;
+      border: 1px solid #9ca3af;
+      background: white;
+      cursor: pointer;
+    }
+
+    .btn-secundario:hover {
+      background: #f3f4f6;
+    }
+
+    @media (max-width: 480px) {
+      header h1 {
+        font-size: 1.15rem;
+      }
+      header span {
+        font-size: 0.7rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>CocinaCompartida MX</h1>
+      <span>Economía colaborativa para mujeres en comedores y cocinas productivas</span>
+    </div>
+    <button class="btn-primario" id="btnAbrirModal">
+      + Publicar recurso
+    </button>
+  </header>
+
+  <main>
+    <p class="intro">
+      <strong>CocinaCompartida MX</strong> es una app de economía colaborativa donde
+      mujeres que trabajan en comedores, cocinas económicas y ventas de comida
+      pueden <strong>compartir, prestar o rentar equipo de cocina, insumos y espacios
+      culinarios</strong> dentro de su comunidad, reduciendo costos y fortaleciendo redes de apoyo.
+    </p>
+
+    <section class="filtros">
+      <label for="filtroCategoria">Categoría:</label>
+      <select id="filtroCategoria">
+        <option value="todas">Todas</option>
+        <option value="Equipo de cocina">Equipo de cocina</option>
+        <option value="Espacios de cocina">Espacios de cocina</option>
+        <option value="Insumos compartidos">Insumos compartidos</option>
+        <option value="Utensilios">Utensilios</option>
+      </select>
+
+      <label for="busqueda">Buscar:</label>
+      <input
+        type="text"
+        id="busqueda"
+        placeholder="Horno, batidora, cocina comunitaria..."
+      />
+    </section>
+
+    <section class="lista-recursos" id="listaRecursos">
+      <!-- Tarjetas se insertan con JS -->
+    </section>
+
+    <footer>
+      Demo académica · Modelo de negocio inclusivo · CocinaCompartida MX
+    </footer>
+  </main>
+
+  <!-- Modal para publicar recurso -->
+  <div class="overlay" id="overlay">
+    <div class="modal">
+      <h2>Publicar recurso de cocina</h2>
+      <form id="formRecurso">
+        <div>
+          <label for="nombreRecurso">Nombre del recurso</label>
+          <input
+            id="nombreRecurso"
+            required
+            placeholder="Horno industrial, batidora, espacio de cocina..."
+          />
+        </div>
+
+        <div>
+          <label for="categoriaRecurso">Categoría</label>
+          <select id="categoriaRecurso" required>
+            <option value="Equipo de cocina">Equipo de cocina</option>
+            <option value="Espacios de cocina">Espacios de cocina</option>
+            <option value="Insumos compartidos">Insumos compartidos</option>
+            <option value="Utensilios">Utensilios</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="barrioRecurso">Colonia / zona</label>
+          <input
+            id="barrioRecurso"
+            required
+            placeholder="Col. Centro, Las Amapolas, etc."
+          />
+        </div>
+
+        <div>
+          <label for="precioRecurso">
+            Aportación sugerida (por día / por hora)
+          </label>
+          <input
+            id="precioRecurso"
+            type="number"
+            min="0"
+            required
+            placeholder="Ej. 80"
+          />
+        </div>
+
+        <div>
+          <label for="tipoUsoRecurso">Tipo de uso</label>
+          <input
+            id="tipoUsoRecurso"
+            placeholder="Renta por hora, intercambio, préstamo solidario..."
+          />
+        </div>
+
+        <div>
+          <label for="notaRecurso">Descripción breve</label>
+          <textarea
+            id="notaRecurso"
+            placeholder="Estado del equipo, capacidad, horarios disponibles, etc."
+          ></textarea>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-secundario" id="btnCancelar">
+            Cancelar
+          </button>
+          <button type="submit" class="btn-primario">
+            Publicar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Datos iniciales (como si ya hubiera usuarias en la app)
+    const recursos = [
+      {
+        nombre: "Horno industrial de gas",
+        categoria: "Equipo de cocina",
+        barrio: "Col. Las Amapolas",
+        precio: 180,
+        tipoUso: "Renta por día",
+        nota: "Capacidad para 4 charolas grandes. Ideal para pan dulce y repostería.",
+      },
+      {
+        nombre: "Batidora industrial 20L",
+        categoria: "Equipo de cocina",
+        barrio: "Col. Centro",
+        precio: 120,
+        tipoUso: "Renta por turno (mañana/tarde)",
+        nota: "Perfecta para masas de pan y mezcla de pasteles. Incluye batidor y gancho.",
+      },
+      {
+        nombre: "Cocina comunitaria equipada",
+        categoria: "Espacios de cocina",
+        barrio: "Col. Obrera",
+        precio: 80,
+        tipoUso: "Uso por hora",
+        nota: "Espacio con estufa, tarja y mesas de trabajo. Se comparte con otras emprendedoras.",
+      },
+      {
+        nombre: "Vaporeras grandes para tamales",
+        categoria: "Utensilios",
+        barrio: "Col. Loma Linda",
+        precio: 60,
+        tipoUso: "Renta por día",
+        nota: "Dos vaporeras de acero, para temporada alta de pedidos.",
+      },
+      {
+        nombre: "Compra compartida de arroz y frijol",
+        categoria: "Insumos compartidos",
+        barrio: "Col. Villas del Sol",
+        precio: 0,
+        tipoUso: "Cooperación entre vecinas",
+        nota: "Organizamos compras al mayoreo para bajar costos; se divide el producto entre participantes.",
+      },
+    ];
+
+    const listaRecursos = document.getElementById("listaRecursos");
+    const filtroCategoria = document.getElementById("filtroCategoria");
+    const busquedaInput = document.getElementById("busqueda");
+    const overlay = document.getElementById("overlay");
+    const btnAbrirModal = document.getElementById("btnAbrirModal");
+    const btnCancelar = document.getElementById("btnCancelar");
+    const formRecurso = document.getElementById("formRecurso");
+
+    function renderRecursos() {
+      const categoriaSeleccionada = filtroCategoria.value;
+      const textoBusqueda = busquedaInput.value.toLowerCase().trim();
+
+      listaRecursos.innerHTML = "";
+
+      const filtrados = recursos.filter((r) => {
+        const coincideCategoria =
+          categoriaSeleccionada === "todas" ||
+          r.categoria === categoriaSeleccionada;
+
+        const coincideTexto =
+          r.nombre.toLowerCase().includes(textoBusqueda) ||
+          r.barrio.toLowerCase().includes(textoBusqueda) ||
+          (r.nota && r.nota.toLowerCase().includes(textoBusqueda)) ||
+          (r.tipoUso && r.tipoUso.toLowerCase().includes(textoBusqueda));
+
+        return coincideCategoria && coincideTexto;
+      });
+
+      if (filtrados.length === 0) {
+        listaRecursos.innerHTML =
+          "<p>No se encontraron recursos con esos filtros.</p>";
+        return;
+      }
+
+      filtrados.forEach((r) => {
+        const tarjeta = document.createElement("article");
+        tarjeta.className = "tarjeta";
+
+        tarjeta.innerHTML = `
+          <div>
+            <span class="categoria-pill">${r.categoria}</span>
+          </div>
+          <h3>${r.nombre}</h3>
+          <p class="barrio">📍 ${r.barrio}</p>
+          <p class="precio">$${r.precio} MXN ${
+          r.precio > 0 ? "" : "(cooperación)"
+        }</p>
+          ${
+            r.tipoUso
+              ? `<p class="tipo-uso">${r.tipoUso}</p>`
+              : ""
+          }
+          ${
+            r.nota
+              ? `<p class="nota">${r.nota}</p>`
+              : ""
+          }
+          <button onclick="solicitarRecurso('${r.nombre.replace(
+            /'/g,
+            "\\'"
+          )}')">
+            Solicitar / Contactar
+          </button>
+        `;
+
+        listaRecursos.appendChild(tarjeta);
+      });
+    }
+
+    function solicitarRecurso(nombre) {
+      alert(
+        'Has solicitado "' +
+          nombre +
+          '".\nEn una versión real, aquí se enviaría un mensaje a la dueña para coordinar horarios y entrega.'
+      );
+    }
+
+    function abrirModal() {
+      overlay.classList.add("activo");
+    }
+
+    function cerrarModal() {
+      overlay.classList.remove("activo");
+      formRecurso.reset();
+    }
+
+    filtroCategoria.addEventListener("change", renderRecursos);
+    busquedaInput.addEventListener("input", renderRecursos);
+    btnAbrirModal.addEventListener("click", abrirModal);
+    btnCancelar.addEventListener("click", cerrarModal);
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) cerrarModal();
+    });
+
+    formRecurso.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const nombre = document.getElementById("nombreRecurso").value.trim();
+      const categoria = document.getElementById("categoriaRecurso").value;
+      const barrio = document.getElementById("barrioRecurso").value.trim();
+      const precio = Number(
+        document.getElementById("precioRecurso").value
+      );
+      const tipoUso = document
+        .getElementById("tipoUsoRecurso")
+        .value.trim();
+      const nota = document.getElementById("notaRecurso").value.trim();
+
+      recursos.unshift({
+        nombre,
+        categoria,
+        barrio,
+        precio: isNaN(precio) ? 0 : precio,
+        tipoUso,
+        nota,
+      });
+
+      cerrarModal();
+      renderRecursos();
+      alert(
+        "Tu recurso de cocina se ha publicado en la demo de CocinaCompartida MX."
+      );
+    });
+
+    // Primera carga
+    renderRecursos();
+
+    // Hacer accesible la función en el scope global
+    window.solicitarRecurso = solicitarRecurso;
+  </script>
+</body>
+</html>
